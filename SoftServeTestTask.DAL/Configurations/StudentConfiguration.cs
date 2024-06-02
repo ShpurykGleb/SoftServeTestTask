@@ -12,13 +12,24 @@ namespace SoftServeTestTask.DAL.Configurations
 
             builder.HasKey(s => s.Id);
 
-            builder.HasOne(t => t.Info)
-                  .WithOne()
-                  .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(s => s.Age)
+               .IsRequired();
 
-            builder.HasOne(t => t.Contacts)
-                 .WithOne()
-                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(s => s.FirstName)
+                .IsRequired()
+                .HasMaxLength(32);
+
+            builder.Property(s => s.SecondName)
+               .IsRequired()
+               .HasMaxLength(32);
+
+            builder.Property(s => s.ThirdName)
+               .IsRequired()
+               .HasMaxLength(32);
+
+            builder.Property(s => s.Gender)
+                .IsRequired()
+                .HasMaxLength(32);
 
             builder.Property(s => s.GPA)
                 .IsRequired()
@@ -30,7 +41,6 @@ namespace SoftServeTestTask.DAL.Configurations
 
             builder.HasMany(t => t.Courses)
                 .WithMany(s => s.Students);
-             
         }
     }
 }

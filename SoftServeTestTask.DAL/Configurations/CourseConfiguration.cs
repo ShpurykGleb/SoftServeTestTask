@@ -20,6 +20,12 @@ namespace SoftServeTestTask.DAL.Configurations
                 .IsRequired()
                 .HasMaxLength(256);
 
+            builder.Property(c => c.Name)
+                .HasMaxLength(32);
+
+            builder.Property(c => c.Description)
+                .HasMaxLength(256);
+
             builder.HasMany(c => c.Teachers)
                 .WithMany(t => t.Courses);
 
