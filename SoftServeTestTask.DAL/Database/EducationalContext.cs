@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SoftServeTestTask.DAL.Entities;
 
 namespace SoftServeTestTask.DAL.Database
 {
-    public class EducationalContext : DbContext
+    public class EducationalContext : IdentityDbContext<ApplicationUser>
     {
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Student> Students { get; set; }

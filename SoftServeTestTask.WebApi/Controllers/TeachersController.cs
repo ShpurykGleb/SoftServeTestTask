@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftServeTestTask.BLL.Dto.Teachers;
 using SoftServeTestTask.BLL.MediatR.Teachers.Commands;
@@ -17,30 +18,34 @@ namespace SoftServeTestTask.WebApi.Controllers
             _mediator = mediator;
         }
 
+        [Authorize("Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Get()
         {
             return Ok(await _mediator.Send(new GetAllTeacherQuery()));
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int? id)
+        public async Task<IActionResult> Get(int? id)
         {
             return Ok(await _mediator.Send(new GetTeacherByIdQuery(id)));
         }
 
+        [Authorize("Admin")]
         [HttpPost]
-        public async Task<IActionResult> Create(TeacherCreateDto teacher)
+        public async Task<IActionResult> Post(TeacherCreateDto teacher)
         {
             return Ok(await _mediator.Send(new CreateTeacherCommand(teacher)));
         }
 
+        [Authorize("Admin")]
         [HttpPut]
-        public async Task<IActionResult> Update(TeacherWithIdDto teacher)
+        public async Task<IActionResult> Put(TeacherWithIdDto teacher)
         {
             return Ok(await _mediator.Send(new UpdateTeacherCommand(teacher)));
         }
 
+        [Authorize("Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int? id)
         {

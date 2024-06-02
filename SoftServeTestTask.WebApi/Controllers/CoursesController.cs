@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftServeTestTask.BLL.Dto.Courses;
 using SoftServeTestTask.BLL.MediatR.Courses.Commands;
@@ -29,18 +30,21 @@ namespace SoftServeTestTask.WebApi.Controllers
             return Ok(await _mediator.Send(new GetCourseByIdQuery(id)));
         }
 
+        [Authorize("Admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
             return Ok(await _mediator.Send(new DeleteCourseCommand(id)));
         }
 
+        [Authorize("Admin")]
         [HttpPost]
         public async Task<IActionResult> Post(CourseCreateDto course)
         {
             return Ok(await _mediator.Send(new CreateCourseCommand(course)));
         }
 
+        [Authorize("Admin")]
         [HttpPut]
         public async Task<IActionResult> Put(CourseUpdateDto course)
         {
