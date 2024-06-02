@@ -1,144 +1,79 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoftServeTestTask.DAL.Entities;
-using SoftServeTestTask.DAL.Entities.Contacts;
-using SoftServeTestTask.DAL.Entities.Infoes;
 
 namespace SoftServeTestTask.DAL.Database
 {
     public static class ModelBuilderExtensions
     {
-        private static Random? _random;
-        private static IEnumerable<Student>? _students;
-        private static IEnumerable<Teacher>? _teachers;
-
-        static ModelBuilderExtensions()
-        {
-            _random = new Random();
-
-        }
-
+        private const int SIZE = 25;
         public static void SeedData(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TeacherContacts>().HasData(GetTeacherContacts());
-            modelBuilder.Entity<TeacherInfoes>().HasData(GetTeacherInfoes());
+            modelBuilder.SeedTeachers();
 
-            _teachers = GetTeachers();
+            modelBuilder.SeedStudents();
 
-            modelBuilder.Entity<Teacher>().HasData(_teachers);
-
-            modelBuilder.Entity<StudentContacts>().HasData(GetStudentContacts());
-            modelBuilder.Entity<StudentInfoes>().HasData(GetStudentInfoes());
-
-            _students = GetStudents();
-
-            modelBuilder.Entity<Student>().HasData(_students);
-
-            modelBuilder.Entity<Course>().HasData(GetCourses());
+            modelBuilder.SeedCourses();
         }
 
-        private static IEnumerable<StudentInfoes> GetStudentInfoes()
+        private static void SeedTeachers(this ModelBuilder modelBuilder)
         {
-            return Enumerable
-               .Range(1, 25)
-               .Select(index => new StudentInfoes()
-               {
-                   Id = index,
-                   Age = index + 18,
-                   FirstName = $"Student {index} first name",
-                   SecondName = $"Student {index} second name",
-                   ThirdName = $"Student {index} third name",
-                   Gender = $"{index} gender",
-                   BirthDate = DateTime.Now,
-               });
-        }
-
-        private static IEnumerable<StudentContacts> GetStudentContacts()
-        {
-            return Enumerable
-               .Range(1, 25)
-               .Select(index => new StudentContacts()
-               {
-                   Id = index,
-                   Email = $"student{index}@gmail.com",
-                   PhoneNumber = $"+380001122334",
-                   Address = $"{index} street, house {index + 1}"
-               });
-        }
-
-        private static decimal GenerateRandomGPA()
-        {
-            double _randomValue = _random.NextDouble();
-            double gpa = 3 + _randomValue * 2;
-            return (decimal)gpa;
-        }
-
-        private static IEnumerable<Student> GetStudents()
-        {
-            return Enumerable
-                .Range(1, 25)
-                .Select(index => new Student()
+            var teachers = new Teacher[SIZE];
+            for (int i = 1; i <= SIZE; i++)
+            {
+                teachers[i - 1] = new Teacher
                 {
-                    Id = index,
-                    GPA = GenerateRandomGPA(),
-                    InfoId = index,
-                    ContactsId = index,
-                    Group = $"{index} student group"
-                });
+                    Id = i,
+                    Age = i + 25,
+                    ExperienceYears = i + 5,
+                    FirstName = $"FirstName{i}",
+                    SecondName = $"SecondName{i}",
+                    ThirdName = $"ThirdName{i}",
+                    Gender = (i % 2 == 0) ? "Male" : "Female",
+                    AcademicDegree = $"Degree {i}",
+                    
+                };
+            }
+            modelBuilder.Entity<Teacher>().HasData(teachers);
         }
 
-        private static IEnumerable<TeacherInfoes> GetTeacherInfoes()
+        private static void SeedStudents(this ModelBuilder modelBuilder)
         {
-            return Enumerable
-                .Range(1, 25)
-                .Select(index => new TeacherInfoes()
+            var students = new Student[SIZE];
+
+            for (int i = 1; i <= SIZE; i++)
+            {
+                students[i - 1] = new Student
                 {
-                    Id = index,
-                    Age = index + 30,
-                    FirstName = $"Teacher {index} first name",
-                    SecondName = $"Teacher {index} second name",
-                    ThirdName = $"Teacher {index} third name",
-                    Gender = $"{index} gender",
-                    BirthDate = DateTime.Now,
-                });
+                    Id = i,
+                    Age = 18 + (i % 5),  // Ages between 18 and 22
+                    FirstName = $"StudentFirstName{i}",
+                    SecondName = $"StudentSecondName{i}",
+                    ThirdName = $"StudentThirdName{i}",
+                    Gender = (i % 2 == 0) ? "Male" : "Female",
+                    GPA = 3.0m + (i % 2) * 0.5m,  // GPA between 3.0 and 3.5
+                    Group = $"Group{i % 5 + 1}"  // Groups between 1 and 5
+                };
+            }
+
+            modelBuilder.Entity<Student>().HasData(students);
         }
 
-        private static IEnumerable<TeacherContacts> GetTeacherContacts()
+        private static void SeedCourses(this ModelBuilder modelBuilder)
         {
-            return Enumerable
-                .Range(1, 25)
-                .Select(index => new TeacherContacts()
-                {
-                    Id = index,
-                    Email = $"teacher{index}@gmail.com",
-                    PhoneNumber = $"+380001122334",
-                    Address = $"{index} street, house {index + 1}"
-                });
-        }
+            var courses = new Course[SIZE];
 
-        private static IEnumerable<Teacher> GetTeachers()
-        {
-            return Enumerable
-                .Range(1, 25)
-                .Select(index => new Teacher()
+            for (int i = 1; i <= 25; i++)
+            {
+                courses[i - 1] = new Course
                 {
-                    Id = index,
-                    AcademicDegree = $"{index} degree",
-                    InfoId = index,
-                    ContactsId = index,
-                    ExperienceYears = index * 2,
-                });
-        }
+                    Id = i,
+                    Name = $"Course {i}",
+                    Description = $"Description of Course {i}",
+                };
+            }
 
-        private static IEnumerable<Course> GetCourses()
-        {
-            return Enumerable
-                .Range(1, 25)
-                .Select(index => new Course()
-                {
-                    Id = index,
-                    Name = $"{index} course name",
-                    Description = $"{index} course description",
-                });
+            modelBuilder.Entity<Course>().HasData(courses);
         }
     }
 }
+
