@@ -9,7 +9,7 @@ namespace SoftServeTestTask.BLL.Profiles
     {
         public TeacherProfile()
         {
-            CreateMap<Teacher, TeacherQueryDto>()
+            CreateMap<Teacher, TeacherShortDto>()
                 .ForMember(dest => dest.Courses, opt => opt.MapFrom(src => src.Courses))
                 .ReverseMap();
 

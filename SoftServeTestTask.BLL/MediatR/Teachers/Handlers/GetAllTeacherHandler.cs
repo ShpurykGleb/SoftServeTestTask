@@ -7,7 +7,7 @@ using SoftServeTestTask.DAL.Repositories;
 
 namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
 {
-    public class GetAllTeacherHandler : IRequestHandler<GetAllTeacherQuery, IEnumerable<TeacherQueryDto>>
+    public class GetAllTeacherHandler : IRequestHandler<GetAllTeacherQuery, IEnumerable<TeacherShortDto>>
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Teacher> _teacherRepository;
@@ -18,11 +18,11 @@ namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
             _teacherRepository = teacherRepository;
         }
 
-        public async Task<IEnumerable<TeacherQueryDto>> Handle(GetAllTeacherQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TeacherShortDto>> Handle(GetAllTeacherQuery request, CancellationToken cancellationToken)
         {
             var existingTeachers = await _teacherRepository.GetAllAsync(t => t.Courses);
 
-            return _mapper.Map<IEnumerable<TeacherQueryDto>>(existingTeachers);
+            return _mapper.Map<IEnumerable<TeacherShortDto>>(existingTeachers);
         }
     }
 }
