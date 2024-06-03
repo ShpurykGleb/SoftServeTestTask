@@ -7,12 +7,15 @@ using SoftServeTestTask.BLL.Dto;
 using SoftServeTestTask.BLL.Profiles;
 using SoftServeTestTask.BLL.MediatR.Courses.Handlers;
 using SoftServeTestTask.Tests.RepositoryMocks;
+using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace SoftServeTestTask.Tests.MediatR.Courses
 {
     public class CreateCourseHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<CreateCourseHandler>> _loggerMock;
         private readonly IGenericRepository<Course> _courseRepositoryMock;
         private readonly IGenericRepository<Teacher> _teacherRepositoryMock;
         private readonly IGenericRepository<Student> _studentRepositoryMock;
@@ -28,6 +31,8 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
 
             _mapper = mapperConfig.CreateMapper();
 
+            _loggerMock = new Mock<ILogger<CreateCourseHandler>>();
+
             _courseRepositoryMock = CourseRepositoryMock.GetMock();
             _teacherRepositoryMock = TeacherRepositoryMock.GetMock();
             _studentRepositoryMock = StudentRepositoryMock.GetMock();
@@ -37,7 +42,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async void CreateCourse_GoodCourse_Should_Pass()
         {
             // Arrange
-            var handler = new CreateCourseHandler(_mapper, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new CreateCourseHandler(_mapper, _loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             var course = new CourseCreateDto(
                 Name: "Mathematics",
@@ -57,7 +62,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async void CreateCourse_NullCourse_Should_Throw_Exception()
         {
             // Arrange
-            var handler = new CreateCourseHandler(_mapper, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new CreateCourseHandler(_mapper, _loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             CourseCreateDto course = null;
 

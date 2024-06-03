@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Authentication;
 using SoftServeTestTask.BLL.MediatR.Authentication.Commands;
 using SoftServeTestTask.BLL.Services.Authentication;
@@ -12,12 +13,14 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 {
     public class LoginHandler : IRequestHandler<LoginCommand, JwtResponseDto>
     {
+        private readonly ILogger<LoginHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJwtService _jwtService;
 
-        public LoginHandler(UserManager<ApplicationUser> userManager, IJwtService jwtService, IConfiguration configuration)
+        public LoginHandler(ILogger<LoginHandler> logger,UserManager<ApplicationUser> userManager, IJwtService jwtService, IConfiguration configuration)
         {
+            _logger = logger;
             _userManager = userManager;
             _jwtService = jwtService;
             _configuration = configuration;
@@ -60,11 +63,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
                     );
             }
 
-            return new JwtResponseDto(
-                    Token: "",
-                    RefreshToken: "",
-                    Expiration: DateTime.Now
-                    );
+            var message = "User data is incorrect.";
+            _logger.LogError(message);
+            throw new ArgumentException(message);
         }
     }
 }

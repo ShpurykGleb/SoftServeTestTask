@@ -7,12 +7,15 @@ using SoftServeTestTask.BLL.MediatR.Students.Handlers;
 using SoftServeTestTask.BLL.MediatR.Students.Commands;
 using SoftServeTestTask.BLL.Dto.Students;
 using SoftServeTestTask.Tests.RepositoryMocks;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace SoftServeTestTask.Tests.MediatR.Students
 {
     public class CreateStudentHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<CreateStudentHandler>> _loggerMock;
         private readonly IGenericRepository<Student> _studentRepositoryMock;
         private readonly IGenericRepository<Course> _courseRepositoryMock;
 
@@ -26,6 +29,8 @@ namespace SoftServeTestTask.Tests.MediatR.Students
 
             _mapper = mapperConfig.CreateMapper();
 
+            _loggerMock = new Mock<ILogger<CreateStudentHandler>>();
+
             _studentRepositoryMock = StudentRepositoryMock.GetMock();
 
             _courseRepositoryMock = CourseRepositoryMock.GetMock();
@@ -35,7 +40,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
         public async void CreateTeacher_GoodTeacher_Should_Pass()
         {
             // Arrange
-            var handler = new CreateStudentHandler(_mapper, _studentRepositoryMock, _courseRepositoryMock);
+            var handler = new CreateStudentHandler(_mapper, _loggerMock.Object, _studentRepositoryMock, _courseRepositoryMock);
 
             var student = new StudentCreateDto(
                  Age: 26,
@@ -59,7 +64,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
         public async void CreateStudent_NullTeacher_Should_Throw_Exception()
         {
             // Arrange
-            var handler = new CreateStudentHandler(_mapper, _studentRepositoryMock, _courseRepositoryMock);
+            var handler = new CreateStudentHandler(_mapper, _loggerMock.Object, _studentRepositoryMock, _courseRepositoryMock);
 
             StudentCreateDto student = null;
 

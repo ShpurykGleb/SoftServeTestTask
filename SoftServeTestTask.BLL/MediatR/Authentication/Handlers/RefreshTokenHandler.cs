@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Authentication;
 using SoftServeTestTask.BLL.MediatR.Authentication.Commands;
 using SoftServeTestTask.BLL.Services.Authentication;
@@ -11,11 +11,13 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 {
     public class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, JwtResponseShortDto>
     {
+        private readonly ILogger<RefreshTokenHandler> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJwtService _jwtService;
 
-        public RefreshTokenHandler(UserManager<ApplicationUser> userManager, IJwtService jwtService)
+        public RefreshTokenHandler(ILogger<RefreshTokenHandler> logger, UserManager<ApplicationUser> userManager, IJwtService jwtService)
         {
+            _logger = logger;
             _userManager = userManager;
             _jwtService = jwtService;
         }
@@ -26,10 +28,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 
             if (tokenModel is null)
             {
-                return new JwtResponseShortDto(
-                    AccessToken: "", 
-                    RefreshToken: ""
-                    );
+                var message = "Token model can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(tokenModel), message);
             }
 
             string? accessToken = tokenModel.AccessToken;
@@ -38,22 +39,32 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
             var principal = _jwtService.GetPrincipalFromExpiredToken(accessToken);
             if (principal == null)
             {
-                return new JwtResponseShortDto(
-                   AccessToken: "",
-                   RefreshToken: ""
-                   );
+                var message = "Principals can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(principal), message);
             }
 
             string username = principal.Identity.Name;
 
             var user = await _userManager.FindByNameAsync(username);
 
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user == null)
             {
-                return new JwtResponseShortDto(
-                  AccessToken: "",
-                  RefreshToken: ""
-                  );
+                var message = "User was not found in the system.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(principal), message);
+            }
+            else if (user.RefreshToken != refreshToken)
+            {
+                var message = "User refresh token is incorrect.";
+                _logger.LogError(message);
+                throw new ArgumentException(message);
+            }
+            else if (user.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                var message = "The user's refresh token has expired.";
+                _logger.LogError(message);
+                throw new ArgumentException(nameof(principal), message);
             }
 
             var newAccessToken = _jwtService.CreateToken(principal.Claims.ToList());

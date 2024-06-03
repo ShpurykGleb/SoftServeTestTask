@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Teachers;
 using SoftServeTestTask.BLL.MediatR.Teachers.Commands;
 using SoftServeTestTask.DAL.Entities;
@@ -8,11 +9,13 @@ namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
 {
     public class UpdateTeacherHandler : IRequestHandler<UpdateTeacherCommand, bool>
     {
+        private readonly ILogger<UpdateTeacherHandler> _logger;
         private readonly IGenericRepository<Teacher> _teacherRepository;
         private readonly IGenericRepository<Course> _courseRepository;
 
-        public UpdateTeacherHandler(IGenericRepository<Teacher> teacherRepository, IGenericRepository<Course> courseRepository)
+        public UpdateTeacherHandler(ILogger<UpdateTeacherHandler> logger,IGenericRepository<Teacher> teacherRepository, IGenericRepository<Course> courseRepository)
         {
+            _logger = logger;
             _teacherRepository = teacherRepository;
             _courseRepository = courseRepository;
         }
@@ -21,14 +24,18 @@ namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
         {
             if (request.Teacher == null)
             {
-                throw new ArgumentNullException(nameof(request), "Teacher can not be null.");
+                var message = "Teacher can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(request), message);
             }
 
             var existingTeacher = await _teacherRepository.GetByIdAsync(request.Teacher.Id);
 
             if (existingTeacher == null)
             {
-                throw new KeyNotFoundException($"Teacher with given id - {request.Teacher.Id}, was not found.");
+                var message = $"Teacher with given id - {request.Teacher.Id}, was not found.";
+                _logger.LogError(message);
+                throw new KeyNotFoundException(message);
             }
 
             await UpdateTeacherAsync(existingTeacher, request.Teacher);

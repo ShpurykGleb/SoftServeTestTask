@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.MediatR.Courses.Commands;
 using SoftServeTestTask.DAL.Entities;
 using SoftServeTestTask.DAL.Repositories;
@@ -7,10 +8,12 @@ namespace SoftServeTestTask.BLL.MediatR.Courses.Handlers
 {
     public class DeleteCourseHandler : IRequestHandler<DeleteCourseCommand, bool>
     {
+        private readonly ILogger<DeleteCourseHandler> _logger;
         private readonly IGenericRepository<Course> _courseRepository;
 
-        public DeleteCourseHandler(IGenericRepository<Course> courseRepository)
+        public DeleteCourseHandler(ILogger<DeleteCourseHandler> logger, IGenericRepository<Course> courseRepository)
         {
+            _logger = logger;
             _courseRepository = courseRepository;
         }
 
@@ -18,11 +21,15 @@ namespace SoftServeTestTask.BLL.MediatR.Courses.Handlers
         {
             if (request.Id == null)
             {
-                throw new ArgumentNullException(nameof(request.Id), "Id can not be null.");
+                var message = "Id can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(request.Id), message);
             }
             else if (request.Id < 1)
             {
-                throw new ArgumentException("Id can not be less than 1.");
+                var message = "Id can not be less than 1.";
+                _logger.LogError(message);
+                throw new ArgumentException(message);
             }
 
             if (await _courseRepository.DeleteAsync(request.Id))

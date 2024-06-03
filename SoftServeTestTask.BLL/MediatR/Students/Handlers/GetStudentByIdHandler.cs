@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Students;
 using SoftServeTestTask.BLL.MediatR.Students.Queries;
 using SoftServeTestTask.DAL.Entities;
@@ -10,11 +11,13 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
     public class GetStudentByIdHandler : IRequestHandler<GetStudentByIdQuery, StudentShortDto>
     {
         private readonly IMapper _mapper;
+        private readonly ILogger<GetStudentByIdHandler> _logger;
         private readonly IGenericRepository<Student> _studentRepository;
 
-        public GetStudentByIdHandler(IMapper mapper, IGenericRepository<Student> studentRepository)
+        public GetStudentByIdHandler(IMapper mapper, ILogger<GetStudentByIdHandler> logger, IGenericRepository<Student> studentRepository)
         {
             _mapper = mapper;
+            _logger = logger;
             _studentRepository = studentRepository;
         }
 
@@ -22,21 +25,27 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
         {
             if (request.Id == null)
             {
-                throw new ArgumentNullException(nameof(request), "Id can not be null.");
+                var message = "Id can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(request), message);
             }
             else if (request.Id < 1)
             {
-                throw new ArgumentException("Id can not be less than 1.");
+                var message = "Id can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentException(message);
             }
 
-            var findedStudent = await _studentRepository.GetByIdAsync(request.Id, c => c.Courses);
+            var foundStudent = await _studentRepository.GetByIdAsync(request.Id, c => c.Courses);
 
-            if (findedStudent == null)
+            if (foundStudent == null)
             {
-                throw new KeyNotFoundException($"Student with given id - {request.Id}, was not found.");
+                var message = $"Student with given id - {request.Id}, was not found.";
+                _logger.LogError(message);
+                throw new KeyNotFoundException(message);
             }
 
-            return _mapper.Map<StudentShortDto>(findedStudent);
+            return _mapper.Map<StudentShortDto>(foundStudent);
         }
     }
 }
