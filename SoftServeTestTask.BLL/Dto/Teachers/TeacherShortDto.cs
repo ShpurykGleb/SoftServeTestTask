@@ -2,7 +2,7 @@
 
 namespace SoftServeTestTask.BLL.Dto.Teachers
 {
-    public record TeacherQueryDto(
+    public record TeacherShortDto(
         int Age,
         int ExperienceYears,
         string FirstName,

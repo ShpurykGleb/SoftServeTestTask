@@ -7,7 +7,7 @@ using SoftServeTestTask.DAL.Repositories;
 
 namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
 {
-    public class GetTeacherByIdHandler : IRequestHandler<GetTeacherByIdQuery, TeacherQueryDto>
+    public class GetTeacherByIdHandler : IRequestHandler<GetTeacherByIdQuery, TeacherShortDto>
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Teacher> _teacherRepository;
@@ -18,7 +18,7 @@ namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
             _teacherRepository = teacherRepository;
         }
 
-        public async Task<TeacherQueryDto> Handle(GetTeacherByIdQuery request, CancellationToken cancellationToken)
+        public async Task<TeacherShortDto> Handle(GetTeacherByIdQuery request, CancellationToken cancellationToken)
         {
             if (request.Id == null)
             {
@@ -36,7 +36,7 @@ namespace SoftServeTestTask.BLL.MediatR.Teachers.Handlers
                 throw new KeyNotFoundException($"Teacher with given id - {request.Id}, was not found.");
             }
 
-            return _mapper.Map<TeacherQueryDto>(findedTeacher);
+            return _mapper.Map<TeacherShortDto>(findedTeacher);
         }
     }
 }
