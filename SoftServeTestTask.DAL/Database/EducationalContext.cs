@@ -10,7 +10,7 @@ namespace SoftServeTestTask.DAL.Database
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
 
-        public EducationalContext()
+       public EducationalContext()
         {
 
         }
