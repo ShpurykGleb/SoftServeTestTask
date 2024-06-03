@@ -8,10 +8,8 @@ namespace SoftServeTestTask.DAL.Database
         private const int SIZE = 25;
         public static void SeedData(this ModelBuilder modelBuilder)
         {
-            modelBuilder.SeedTeachers();
-
             modelBuilder.SeedStudents();
-
+            modelBuilder.SeedTeachers();
             modelBuilder.SeedCourses();
         }
 
@@ -30,9 +28,9 @@ namespace SoftServeTestTask.DAL.Database
                     ThirdName = $"ThirdName{i}",
                     Gender = (i % 2 == 0) ? "Male" : "Female",
                     AcademicDegree = $"Degree {i}",
-                    
                 };
             }
+
             modelBuilder.Entity<Teacher>().HasData(teachers);
         }
 
@@ -57,7 +55,7 @@ namespace SoftServeTestTask.DAL.Database
 
             modelBuilder.Entity<Student>().HasData(students);
         }
-
+      
         private static void SeedCourses(this ModelBuilder modelBuilder)
         {
             var courses = new Course[SIZE];

@@ -34,7 +34,7 @@ namespace SoftServeTestTask.DAL.Migrations
 
                     b.HasIndex("StudentsId");
 
-                    b.ToTable("CourseStudent");
+                    b.ToTable("CourseStudent", (string)null);
                 });
 
             modelBuilder.Entity("CourseTeacher", b =>
@@ -49,7 +49,7 @@ namespace SoftServeTestTask.DAL.Migrations
 
                     b.HasIndex("TeachersId");
 
-                    b.ToTable("CourseTeacher");
+                    b.ToTable("CourseTeacher", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -26,11 +26,11 @@ namespace SoftServeTestTask.DAL.Configurations
             builder.Property(c => c.Description)
                 .HasMaxLength(256);
 
-            builder.HasMany(c => c.Teachers)
-                .WithMany(t => t.Courses);
-
             builder.HasMany(c => c.Students)
-               .WithMany(s => s.Courses);
+                .WithMany(s => s.Courses);
+
+            builder.HasMany(c => c.Teachers)
+              .WithMany(t => t.Courses);
         }
     }
 }
