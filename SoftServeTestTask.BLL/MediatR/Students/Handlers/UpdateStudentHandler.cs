@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Students;
 using SoftServeTestTask.BLL.MediatR.Students.Commands;
 using SoftServeTestTask.DAL.Entities;
@@ -9,11 +9,13 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
 {
     public class UpdateStudentHandler : IRequestHandler<UpdateStudentCommand, bool>
     {
+        private readonly ILogger<UpdateStudentHandler> _logger;
         private readonly IGenericRepository<Student> _studentRepository;
         private readonly IGenericRepository<Course> _courseRepository;
 
-        public UpdateStudentHandler(IGenericRepository<Student> studentRepository, IGenericRepository<Course> courseRepository)
+        public UpdateStudentHandler(ILogger<UpdateStudentHandler> logger, IGenericRepository<Student> studentRepository, IGenericRepository<Course> courseRepository)
         {
+            _logger = logger;
             _studentRepository = studentRepository;
             _courseRepository = courseRepository;
         }
@@ -22,14 +24,18 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
         {
             if (request.Student == null)
             {
-                throw new ArgumentNullException(nameof(request), "Student can not be null.");
+                var message = "Student can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(request), message);
             }
 
             var existingStudent = await _studentRepository.GetByIdAsync(request.Student.Id);
 
             if (existingStudent == null)
             {
-                throw new KeyNotFoundException($"Student with given id - {request.Student.Id}, was not found.");
+                var message = $"Student with given id - {request.Student.Id}, was not found.";
+                _logger.LogError(message);
+                throw new KeyNotFoundException(message);
             }
 
             await UpdateStudent(existingStudent, request.Student);

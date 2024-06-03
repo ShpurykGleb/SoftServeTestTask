@@ -4,14 +4,16 @@ using SoftServeTestTask.DAL.Entities;
 using SoftServeTestTask.DAL.Repositories;
 using SoftServeTestTask.BLL.Profiles;
 using AutoMapper;
-using SoftServeTestTask.BLL.MediatR.Teachers.Queries;
 using SoftServeTestTask.Tests.RepositoryMocks;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace SoftServeTestTask.Tests.MediatR.Courses
 {
     public class GetCourseByIdHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<GetCourseByIdHandler>> _loggerMock;
         private readonly IGenericRepository<Course> _repositoryMock;
 
         public GetCourseByIdHandlerTest()
@@ -23,6 +25,8 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
 
             _mapper = mapperConfig.CreateMapper();
 
+            _loggerMock = new Mock<ILogger<GetCourseByIdHandler>>();
+
             _repositoryMock = CourseRepositoryMock.GetMock();
         }
 
@@ -30,7 +34,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task GetCourseById_CourseExists()
         {
             // Arrange
-            var handler = new GetCourseByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetCourseByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
             string name = "CourseName1";
 
             // Act
@@ -45,7 +49,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task GetCourseById_CourseDoesNotExist()
         {
             // Arrange
-            var handler = new GetCourseByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetCourseByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
             int nonExistingCourseId = 999;
 
             // Act & Assert
@@ -59,7 +63,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task GetCourseById_InvalidCourseId()
         {
             // Arrange
-            var handler = new GetCourseByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetCourseByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
             int invalidCourseId = 0;
 
             // Act & Assert
@@ -73,7 +77,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task GetCourseById_NullCourseId()
         {
             // Arrange
-            var handler = new GetCourseByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetCourseByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>

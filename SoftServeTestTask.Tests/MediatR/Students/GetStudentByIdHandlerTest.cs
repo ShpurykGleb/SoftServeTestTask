@@ -6,12 +6,14 @@ using Moq;
 using AutoMapper;
 using SoftServeTestTask.BLL.Profiles;
 using SoftServeTestTask.Tests.RepositoryMocks;
+using Microsoft.Extensions.Logging;
 
 namespace SoftServeTestTask.Tests.MediatR.Students
 {
     public class GetStudentByIdHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<GetStudentByIdHandler>> _loggerMock;
         private readonly IGenericRepository<Student> _repositoryMock;
 
         public GetStudentByIdHandlerTest()
@@ -22,6 +24,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
             });
 
             _mapper = mapperConfig.CreateMapper();
+            _loggerMock = new Mock<ILogger<GetStudentByIdHandler>>();
             _repositoryMock = StudentRepositoryMock.GetMock();
         }
 
@@ -29,7 +32,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
         public async Task GetStudentById_IdNull_ThrowsArgumentNullException()
         {
             // Arrange
-            var handler = new GetStudentByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetStudentByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
@@ -42,7 +45,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
         public async Task GetStudentById_IdLessThanOne_ThrowsArgumentException()
         {
             // Arrange
-            var handler = new GetStudentByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetStudentByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -67,7 +70,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
                 Group = "A",
             };
 
-            var handler = new GetStudentByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetStudentByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act
             var result = await handler.Handle(new GetStudentByIdQuery(5), CancellationToken.None);
@@ -83,7 +86,7 @@ namespace SoftServeTestTask.Tests.MediatR.Students
         {
             // Arrange
             var nonExistingId = 100;
-            var handler = new GetStudentByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetStudentByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<KeyNotFoundException>(async () =>

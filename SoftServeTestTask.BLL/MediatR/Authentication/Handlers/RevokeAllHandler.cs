@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Authentication;
 using SoftServeTestTask.BLL.MediatR.Authentication.Commands;
 using SoftServeTestTask.DAL.Entities;
@@ -8,10 +9,12 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 {
     internal class RevokeAllHandler : IRequestHandler<RevokeAllCommand, ResponseDto>
     {
+        private readonly ILogger<RevokeAllHandler> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public RevokeAllHandler(UserManager<ApplicationUser> userManager)
+        public RevokeAllHandler(ILogger<RevokeAllHandler> logger, UserManager<ApplicationUser> userManager)
         {
+            _logger = logger;
             _userManager = userManager;
         }
 
@@ -24,7 +27,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
                 await _userManager.UpdateAsync(user);
             }
 
-            return new ResponseDto(Status: "Success", Message: "All tokens revoked successfully.");
+            var message = "All tokens revoked successfully.";
+            _logger.LogInformation(message);
+            return new ResponseDto(Status: "Success", Message: message);
         }
     }
 }

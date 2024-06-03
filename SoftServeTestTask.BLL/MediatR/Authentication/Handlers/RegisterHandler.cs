@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Authentication;
 using SoftServeTestTask.BLL.MediatR.Authentication.Commands;
 using SoftServeTestTask.DAL.Entities;
@@ -9,10 +9,12 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 {
     public class RegisterHandler : IRequestHandler<RegisterCommand, ResponseDto>
     {
+        private readonly ILogger<RegisterHandler> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public RegisterHandler(UserManager<ApplicationUser> userManager)
+        public RegisterHandler(ILogger<RegisterHandler> logger,UserManager<ApplicationUser> userManager)
         {
+            _logger = logger;
             _userManager = userManager;
         }
 
@@ -23,9 +25,11 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
             {
+                var message = "User already exists!";
+                _logger.LogError(message);
                 return new ResponseDto(
                     Status: "Error",
-                    Message: "User already exists!");
+                    Message: message);
             }
 
             ApplicationUser user = new()
@@ -38,7 +42,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                return new ResponseDto(Status: "Error", Message: "User creation failed! Please check user details and try again.");
+                var message = "User creation failed! Please check user details and try again.";
+                _logger.LogError(message);
+                return new ResponseDto(Status: "Error", Message: message);
             }
 
             return new ResponseDto(Status: "Success", Message: "User created successfully!");

@@ -5,17 +5,22 @@ using SoftServeTestTask.DAL.Entities;
 using SoftServeTestTask.DAL.Repositories;
 using SoftServeTestTask.BLL.Dto;
 using SoftServeTestTask.Tests.RepositoryMocks;
+using Castle.Core.Logging;
+using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace SoftServeTestTask.Tests.MediatR.Courses
 {
     public class UpdateCourseHandlerTest
     {
+        private readonly Mock<ILogger<UpdateCourseHandler>> _loggerMock;
         private readonly IGenericRepository<Course> _courseRepositoryMock;
         private readonly IGenericRepository<Teacher> _teacherRepositoryMock;
         private readonly IGenericRepository<Student> _studentRepositoryMock;
 
         public UpdateCourseHandlerTest()
         {
+            _loggerMock = new Mock<ILogger<UpdateCourseHandler>>();
             _courseRepositoryMock = CourseRepositoryMock.GetMock();
             _teacherRepositoryMock = TeacherRepositoryMock.GetMock();
             _studentRepositoryMock = StudentRepositoryMock.GetMock();
@@ -25,7 +30,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task UpdateCourse_Course_Null_Should_Throw_ArgumentNullException()
         {
             // Arrange
-            var handler = new UpdateCourseHandler(_courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new UpdateCourseHandler(_loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             CourseUpdateDto course = null;
 
@@ -40,7 +45,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task UpdateCourse_Course_Id_Less_Than_Zero_Should_Throw_KeyNotFoundException()
         {
             // Arrange
-            var handler = new UpdateCourseHandler(_courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new UpdateCourseHandler(_loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             var course = new CourseUpdateDto(
                 Id: -1,
@@ -61,7 +66,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task UpdateCourse_Course_Good_Should_Pass()
         {
             // Arrange
-            var handler = new UpdateCourseHandler(_courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new UpdateCourseHandler(_loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             var course = new CourseUpdateDto(
                 Id: 1,
@@ -82,7 +87,7 @@ namespace SoftServeTestTask.Tests.MediatR.Courses
         public async Task UpdateCourse_Course_Id_Not_Exist_Should_Throw_KeyNotFoundException()
         {
             // Arrange
-            var handler = new UpdateCourseHandler(_courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
+            var handler = new UpdateCourseHandler(_loggerMock.Object, _courseRepositoryMock, _teacherRepositoryMock, _studentRepositoryMock);
 
             var course = new CourseUpdateDto(
                 Id: 100,

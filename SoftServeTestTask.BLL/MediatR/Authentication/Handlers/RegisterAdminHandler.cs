@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.Dto.Authentication;
 using SoftServeTestTask.BLL.MediatR.Authentication.Commands;
 using SoftServeTestTask.DAL.Entities;
@@ -9,11 +10,13 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
 {
     public class RegisterAdminHandler : IRequestHandler<RegisterAdminCommand, ResponseDto>
     {
+        private readonly ILogger<RegisterAdminHandler> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RegisterAdminHandler(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public RegisterAdminHandler(ILogger<RegisterAdminHandler> logger,UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -25,7 +28,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
             {
-                return new ResponseDto(Status: "Error", Message: "User already exists!");
+                var message = "User already exists!";
+                _logger.LogError(message);
+                return new ResponseDto(Status: "Error", Message: message);
             }
                
             ApplicationUser user = new()
@@ -37,7 +42,9 @@ namespace SoftServeTestTask.BLL.MediatR.Authentication.Handlers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                return new ResponseDto(Status: "Error", Message: "User creation failed! Please check user details and try again.");
+                var message = "User creation failed! Please check user details and try again.";
+                _logger.LogError(message);
+                return new ResponseDto(Status: "Error", Message: message);
             }
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))

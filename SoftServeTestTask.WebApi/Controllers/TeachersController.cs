@@ -34,8 +34,8 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// Gets a teacher based on the entered id.
         /// </summary>
         /// <param name="id">Teacher id to find in database.</param>
-        /// <returns>A finded teacher.</returns>
-        /// <response code="200">Returns the finded teacher from the database.</response>
+        /// <returns>A found teacher.</returns>
+        /// <response code="200">Returns the found teacher from the database.</response>
         /// <response code="400">If something is wrong with id.</response>
         /// <response code="404">If teacher was not found.</response>
         [HttpGet("{id:int}")]

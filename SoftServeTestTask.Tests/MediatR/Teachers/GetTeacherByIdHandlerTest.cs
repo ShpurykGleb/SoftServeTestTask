@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SoftServeTestTask.BLL.MediatR.Teachers.Handlers;
 using SoftServeTestTask.BLL.MediatR.Teachers.Queries;
 using SoftServeTestTask.BLL.Profiles;
@@ -11,6 +14,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
     public class GetTeacherByIdHandlerTest
     {
         private readonly IMapper _mapper;
+        private readonly Mock<ILogger<GetTeacherByIdHandler>> _loggerMock;
         private readonly IGenericRepository<Teacher> _repositoryMock;
 
         public GetTeacherByIdHandlerTest()
@@ -22,6 +26,8 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
 
             _mapper = mapperConfig.CreateMapper();
 
+            _loggerMock = new Mock<ILogger<GetTeacherByIdHandler>>();
+
             _repositoryMock = TeacherRepositoryMock.GetMock();
         }
 
@@ -29,7 +35,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_IdNull()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(async () =>
@@ -42,7 +48,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_IdLessThanOne()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -55,7 +61,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_First()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             var teacher = new Teacher()
             {
@@ -83,7 +89,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_Five()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             var teacher = new Teacher()
             {
@@ -111,7 +117,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_Ten()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             var teacher = new Teacher()
             {
@@ -139,7 +145,7 @@ namespace SoftServeTestTask.Tests.MediatR.Teachers
         public async void GetTeacherById_Eleven()
         {
             // Arrange
-            var handler = new GetTeacherByIdHandler(_mapper, _repositoryMock);
+            var handler = new GetTeacherByIdHandler(_mapper, _loggerMock.Object, _repositoryMock);
 
             var teacher = new Teacher()
             {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SoftServeTestTask.BLL.MediatR.Students.Commands;
 using SoftServeTestTask.DAL.Entities;
 using SoftServeTestTask.DAL.Repositories;
@@ -9,12 +10,14 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
     public class CreateStudentHandler : IRequestHandler<CreateStudentCommand, bool>
     {
         private readonly IMapper _mapper;
+        private readonly ILogger<CreateStudentHandler> _logger;
         private readonly IGenericRepository<Student> _studentRepository;
         private readonly IGenericRepository<Course> _courseRepository;
 
-        public CreateStudentHandler(IMapper mapper, IGenericRepository<Student> studentRepository, IGenericRepository<Course> courseRepository)
+        public CreateStudentHandler(IMapper mapper, ILogger<CreateStudentHandler> logger, IGenericRepository<Student> studentRepository, IGenericRepository<Course> courseRepository)
         {
             _mapper = mapper;
+            _logger = logger;
             _studentRepository = studentRepository;
             _courseRepository = courseRepository;
         }
@@ -23,7 +26,9 @@ namespace SoftServeTestTask.BLL.MediatR.Students.Handlers
         {
             if (request.Student == null)
             {
-                throw new ArgumentNullException(nameof(request), "Student can not be null.");
+                var message = "Student can not be null.";
+                _logger.LogError(message);
+                throw new ArgumentNullException(nameof(request), message);
             }
 
             var studentDto = request.Student;
