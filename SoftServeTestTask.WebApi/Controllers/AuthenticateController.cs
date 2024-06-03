@@ -22,6 +22,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// </summary>
         /// <param name="loginModel">The login model containing username and password.</param>
         /// <returns>Returns an authentication token.</returns>
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModelDto loginModel)
         {
             return Ok(await _mediator.Send(new LoginCommand(loginModel)));
@@ -32,6 +33,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// </summary>
         /// <param name="registerModel">The registration model containing user details.</param>
         /// <returns>Returns the result of the registration process.</returns>
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModelDto registerModel)
         {
             return Ok(await _mediator.Send(new RegisterCommand(registerModel)));
@@ -42,6 +44,8 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// </summary>
         /// <param name="registerModel">The registration model containing user details.</param>
         /// <returns>Returns the result of the registration process.</returns>
+        [Authorize("Admin")]
+        [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModelDto registerModel)
         {
             return Ok(await _mediator.Send(new RegisterAdminCommand(registerModel)));
@@ -52,6 +56,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// </summary>
         /// <param name="tokenModel">The token model containing the refresh token.</param>
         /// <returns>Returns a new authentication token.</returns>
+        [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenModelDto tokenModel)
         {
             return Ok(await _mediator.Send(new RefreshTokenCommand(tokenModel)));
@@ -73,6 +78,8 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// Revokes all authentication tokens.
         /// </summary>
         /// <returns>Returns the result of the revocation process.</returns>
+        [Authorize("Admin")]
+        [HttpPost("revoke-all")]
         public async Task<IActionResult> RevokeAll()
         {
             return Ok(await _mediator.Send(new RevokeAllCommand()));
