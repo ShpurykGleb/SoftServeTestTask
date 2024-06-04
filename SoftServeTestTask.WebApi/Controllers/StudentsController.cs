@@ -39,7 +39,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <response code="400">If something is wrong with id.</response>
         /// <response code="404">If student was not found.</response>
         [HttpGet("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TeacherShortDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentShortDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int? id)

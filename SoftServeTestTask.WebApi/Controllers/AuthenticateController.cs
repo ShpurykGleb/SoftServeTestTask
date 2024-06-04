@@ -37,7 +37,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <param name="registerModel">The registration model containing user details.</param>
         /// <returns>A response with the result of the registration process.</returns>
         /// <response code="200">Returns a response with the result of the registration process.</response>
-        [HttpPost("register")]
+        [HttpPost("register/user")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto))]
         public async Task<IActionResult> Register([FromBody] RegisterModelDto registerModel)
         {
@@ -53,7 +53,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <response code="401">If user is not authenticated in the system.</response>
         /// <response code="403">If user is not admin.</response>
         [Authorize("Admin")]
-        [HttpPost("register-admin")]
+        [HttpPost("register/admin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseDto))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -68,7 +68,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <param name="tokenModel">The token model containing the refresh token.</param>
         /// <returns>Returns a response with access and refresh token.</returns>
         /// <response code="200">Returns a response with access and refresh token.</response>
-        [HttpPost("refresh-token")]
+        [HttpPost("token/refresh")]
         [ProducesResponseType(StatusCodes.Status200OK,Type = typeof(JwtResponseShortDto))]
         public async Task<IActionResult> RefreshToken([FromBody] TokenModelDto tokenModel)
         {
@@ -84,7 +84,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <response code="401">If user is not authenticated in the system.</response>
         /// <response code="403">If user is not admin.</response>
         [Authorize("Admin")]
-        [HttpPost("revoke/{username:alpha}")]
+        [HttpPost("token/revoke/{username:alpha}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -101,7 +101,7 @@ namespace SoftServeTestTask.WebApi.Controllers
         /// <response code="401">If user is not authenticated in the system.</response>
         /// <response code="403">If user is not admin.</response>
         [Authorize("Admin")]
-        [HttpPost("revoke-all")]
+        [HttpPost("token/revoke")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

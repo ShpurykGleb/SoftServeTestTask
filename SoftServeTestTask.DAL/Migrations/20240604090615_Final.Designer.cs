@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoftServeTestTask.DAL.Database;
 
@@ -11,9 +12,11 @@ using SoftServeTestTask.DAL.Database;
 namespace SoftServeTestTask.DAL.Migrations
 {
     [DbContext(typeof(EducationalContext))]
-    partial class EducationalContextModelSnapshot : ModelSnapshot
+    [Migration("20240604090615_Final")]
+    partial class Final
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
